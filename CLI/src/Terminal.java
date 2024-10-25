@@ -16,23 +16,35 @@ public class Terminal {
     // this is the destination directory that the user will be working in by default
     public static String destination = "//D";
 
-    // command cd to change the directory that the user is in to the directory that
-    // the user wants to go to
-    public String cd(String location, String currentLocation) {
-
-        // File object pointing to the target directory
-        File newDirectory = new File(currentLocation + "\\" + location);
-
-        if (newDirectory.exists() && newDirectory.isDirectory()) {
-            // Change the current directory to the new directory
-            currentLocation = newDirectory.getAbsolutePath();
-            System.setProperty("user.dir", currentLocation); // Update the working directory
-        } else {
-            System.out.println("Directory not found.");
-        }
-
-        return currentLocation;
+    public void pwd(){
+        System.out.println(System.getProperty("user.dir"));
     }
+// Command cd to change the directory that the user is in to the directory that
+// the user wants to go to
+public String cd(String location, String currentLocation) {
+
+    File newDirectory;
+
+    // Check if the user wants to go back to the parent directory
+    if (location.equals("..")) {
+        newDirectory = new File(currentLocation).getParentFile();
+    } else {
+        // File object pointing to the target directory
+        newDirectory = new File(currentLocation + "\\" + location);
+    }
+
+    // Validate if the target directory exists and is a directory
+    if (newDirectory != null && newDirectory.exists() && newDirectory.isDirectory()) {
+        // Change the current directory to the new directory
+        currentLocation = newDirectory.getAbsolutePath();
+        System.setProperty("user.dir", currentLocation); // Update the working directory
+    } else {
+        System.out.println("Directory not found.");
+    }
+
+    return currentLocation;
+}
+
 
     // command rm to remove file from the directory
     public void rm(String fileName) {

@@ -44,6 +44,12 @@ public class main {
                         directory = T.cd(parse.getArguments()[1], directory);
                     } else if (cmd.equals("ls")) {
                         T.ls();
+                    } else if (cmd.equals("pwd")) {
+                        if (parse.getFirstArguments().equals("")) {
+                            T.pwd();
+                        } else {
+                            System.out.println("No arguments needed");
+                        }
                     } else if (cmd.equals("cat")) {
                         if (parse.getArguments()[1].equals(">") || parse.getArguments()[1].equals(">>")) {
                             check_redirect(parse.getArguments()[1], directory, parse.getArguments()[2]);
