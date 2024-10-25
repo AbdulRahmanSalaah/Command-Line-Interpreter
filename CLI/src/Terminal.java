@@ -16,35 +16,26 @@ public class Terminal {
     // this is the destination directory that the user will be working in by default
     public static String destination = "//D";
 
+    // command cd to change the directory that the user is in to the directory that
+    // the user wants to go to
     public void pwd(){
         System.out.println(System.getProperty("user.dir"));
     }
-// Command cd to change the directory that the user is in to the directory that
-// the user wants to go to
-public String cd(String location, String currentLocation) {
+    public String cd(String location, String currentLocation) {
 
-    File newDirectory;
+// File object pointing to the target directory
+        File newDirectory = new File(currentLocation + "\\" + location);
 
-    // Check if the user wants to go back to the parent directory
-    if (location.equals("..")) {
-        newDirectory = new File(currentLocation).getParentFile();
-    } else {
-        // File object pointing to the target directory
-        newDirectory = new File(currentLocation + "\\" + location);
+        if (newDirectory.exists() && newDirectory.isDirectory()) {
+            // Change the current directory to the new directory
+            currentLocation = newDirectory.getAbsolutePath();
+            System.setProperty("user.dir", currentLocation); // Update the working directory
+        } else {
+            System.out.println("Directory not found.");
+        }
+
+        return currentLocation;
     }
-
-    // Validate if the target directory exists and is a directory
-    if (newDirectory != null && newDirectory.exists() && newDirectory.isDirectory()) {
-        // Change the current directory to the new directory
-        currentLocation = newDirectory.getAbsolutePath();
-        System.setProperty("user.dir", currentLocation); // Update the working directory
-    } else {
-        System.out.println("Directory not found.");
-    }
-
-    return currentLocation;
-}
-
 
     // command rm to remove file from the directory
     public void rm(String fileName) {
@@ -61,12 +52,11 @@ public String cd(String location, String currentLocation) {
 
     // command mv to move file from source to destination
     public void mv(String source, String destn) throws IOException {
-        // Construct source and destination file paths based on the current working
-        // directory
+        // Construct source and destination file paths based on the current working directory
         String currentPath = System.getProperty("user.dir");
         File sourceFile = new File(currentPath + "\\" + source);
         File destinationFile = new File(currentPath + "\\" + destn);
-
+    
         // Check if the source file exists
         if (sourceFile.exists()) {
             // Attempt to rename (move) the file
@@ -79,6 +69,7 @@ public String cd(String location, String currentLocation) {
             System.out.println("Source file does not exist.");
         }
     }
+    
 
     // command rmdir to remove a empty directory from the directory
     public void rmdir(String fileName) {
@@ -97,14 +88,70 @@ public String cd(String location, String currentLocation) {
         }
     }
 
-    // command ls to list all the files in the directory
-    public void ls() {
+    public void ls(String[] args) {
         File directory = new File(System.getProperty("user.dir"));
-        String files[] = directory.list();
-        for (String file : files) {
-            System.out.println(file + "\n");
+        boolean showAll = false;
+        boolean recursive = false;
+
+        // Check for `-a` and `-r` flags in the arguments
+        for (String arg : args) {
+            if (arg.equals("-a")) {
+                showAll = true;
+            }
+            if (arg.equals("-r")) {
+                recursive = true;
+            }
+        }
+
+        // Call appropriate listing function based on flags
+        if (recursive) {
+            listFilesRecursively(directory, showAll, 0);
+        } else {
+            listFiles(directory, showAll);
         }
     }
+
+    // Method to list files in the current directory (non-recursive)
+    private void listFiles(File directory, boolean showAll) {
+        String[] files;
+        if (showAll) {
+            files = directory.list(); // Show all files, including hidden ones
+        } else {
+            files = directory.list((dir, name) -> !name.startsWith(".")); // Show only non-hidden files
+        }
+
+        // Print each file or folder
+        if (files != null) {
+            for (String file : files) {
+                System.out.println(file);
+            }
+        } else {
+            System.out.println("No files found or access issue.");
+        }
+    }
+
+    // Method to list files recursively with indentation for subdirectories
+    private void listFilesRecursively(File directory, boolean showAll, int depth) {
+        File[] files = directory.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                // Only show hidden files if `-a` is true
+                if (showAll || !file.isHidden()) {
+                    // Print with indentation based on the depth level
+                    System.out.println("  ".repeat(depth) + file.getName());
+                }
+
+                // If the file is a directory, call this method recursively with increased depth
+                if (file.isDirectory()) {
+                    listFilesRecursively(file, showAll, depth + 1);
+                }
+            }
+        }
+    }
+
+
+
 
     // command mkdir to create a new directory in the current directory
     public void mkdir(String fileName) throws IOException {
@@ -146,10 +193,9 @@ public String cd(String location, String currentLocation) {
         String Current_path = System.getProperty("user.dir");
         File file_path = new File(Current_path + "\\" + fileName);
         if (file_path.exists()) {
-            try (Scanner scan_file = new Scanner(file_path)) {
-                while (scan_file.hasNext()) {
-                    System.out.println(scan_file.nextLine());
-                }
+            Scanner scan_file = new Scanner(file_path);
+            while (scan_file.hasNext()) {
+                System.out.println(scan_file.nextLine());
             }
         } else {
             System.out.println("file doesn't exist");
@@ -167,25 +213,19 @@ public String cd(String location, String currentLocation) {
 
     public void help() {
         System.out.println("================================");
-        System.out.printf("%-10s %-5s %-60s%n", "Command", "Args", "Description");
-        System.out.println("================================");
-        System.out.printf("%-10s %-5s %-60s%n", "cd", "(1)", "Change the current directory. Requires either the full path or the name of the directory.");
-        System.out.printf("%-10s %-5s %-60s%n", "ls", "(0)", "Shows all files in the current directory.");
-        System.out.printf("%-10s %-5s %-60s%n", "ls -a", "(0)", "Shows all files, including hidden ones, in the current directory.");
-        System.out.printf("%-10s %-5s %-60s%n", "ls -r", "(0)", "Shows all files in reverse order in the current directory.");
-        System.out.printf("%-10s %-5s %-60s%n", "pwd", "(0)", "Prints the current working directory path.");
-        System.out.printf("%-10s %-5s %-60s%n", "cat", "(1)", "Displays the contents of a file.");
-        System.out.printf("%-10s %-5s %-60s%n", "mkdir", "(1)", "Creates a directory with the specified name.");
-        System.out.printf("%-10s %-5s %-60s%n", "rmdir", "(1)", "Removes a directory if it is empty.");
-        System.out.printf("%-10s %-5s %-60s%n", "touch", "(1)", "Creates an empty file with the specified name.");
-        System.out.printf("%-10s %-5s %-60s%n", "mv", "(2)", "Moves a file to the specified directory.");
-        System.out.printf("%-10s %-5s %-60s%n", "rm", "(1)", "Removes the specified file.");
-        System.out.printf("%-10s %-5s %-60s%n", "help", "(0)", "Displays available commands, their arguments, and a brief description.");
-        System.out.printf("%-10s %-5s %-60s%n", "clear", "(0)", "Clears the terminal screen.");
+        System.out.println("cd" + "   " + "(1)"
+                + " - Change the current directory, It requires either the full path or the name of the directory");
+        System.out.println("ls" + "   " + "(0)" + " - shows all files in the current directory");
+        System.out.println("cat" + "   " + "(1)" + " - shows all context of a file");
+        System.out.println("mkdir" + "   " + "(1)" + " - Created a directory");
+        System.out.println("rmdir" + "   " + "(1)" + " - Remove a directory if it empty");
+        System.out.println("touch" + "   " + "(1)" + " - Created a file");
+        System.out.println("mv" + "   " + "(3)" + " - cut a file into the directory mentioned");
+        System.out.println("rm" + "   " + "(1)" + " - Remove a file");
+        System.out.println("help" + "   " + "(0)" + " - Print commands, their arguments and a brief description");
+        System.out.println("clear" + "   " + "(0)" + " - clear the terminal page");
         System.out.println("================================");
     }
-    
-    
 
     void WriteFile(String location, String fileName, boolean append) {
 
@@ -195,7 +235,7 @@ public String cd(String location, String currentLocation) {
         try {
 
             // this is used to check if the user wants to write to the file or append to it
-            fout = new FileWriter(location + fileName, append);
+            fout = new FileWriter(location + fileName , append);
 
             // this is the input that the user will write to the file
             String in;
@@ -206,9 +246,7 @@ public String cd(String location, String currentLocation) {
             fout.write(in + "\n");
             fout.close();
         } catch (IOException e) {
-            System.out.println("An error occurred.");
             e.printStackTrace();
-
         }
 
     }
