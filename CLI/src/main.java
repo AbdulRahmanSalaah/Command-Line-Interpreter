@@ -39,11 +39,13 @@ public class main {
                     Parser parse = new Parser(allCommands);
 
                     String cmd = parse.getCmd();
+                    String[] arguments = parse.getArguments();
+
 
                     if (cmd.equals("cd")) {
                         directory = T.cd(parse.getArguments()[1], directory);
                     } else if (cmd.equals("ls")) {
-                        T.ls();
+                        T.ls(arguments);
                     } else if (cmd.equals("pwd")) {
                         if (parse.getFirstArguments().equals("")) {
                             T.pwd();
