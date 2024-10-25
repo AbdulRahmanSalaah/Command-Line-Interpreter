@@ -176,7 +176,7 @@ return currentLocation;
         try {
 
             // this is used to check if the user wants to write to the file or append to it
-            fout = new FileWriter(location + fileName + ".txt", append);
+            fout = new FileWriter(location + fileName , append);
 
             // this is the input that the user will write to the file
             String in;
