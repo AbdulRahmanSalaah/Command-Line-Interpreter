@@ -6,43 +6,33 @@ public class main {
     static Terminal T = new Terminal();
 
     static void check_redirect(String arg, String dir, String fileName) {
-
         // if the user wants to overwrite the file
         if (arg.equals(">")) {
             T.WriteFile(dir, fileName, false);
-            // if the user wants to append to the file
-        } else if (arg.equals(">>")) {
+        } 
+        // if the user wants to append to the file
+        else if (arg.equals(">>")) {
             T.WriteFile(dir, fileName, true);
         }
     }
 
     public static void main(String[] args) throws IOException {
-
         Scanner input = new Scanner(System.in);
-        String directory = System.getProperty("user.dir") + "\\";
 
         do {
+            String directory = System.getProperty("user.dir") + "\\";
+
             System.out.print(directory);
             System.out.print(":-$ ");
             String operation = input.nextLine();
             System.out.println();
-            boolean pipe = true;
-            int commandNumber = 0;
-            int lastSlash = 0;
-            String nextCommand = "";
-            while (pipe && commandNumber < 2) {
-                commandNumber++;
-                if (commandNumber == 1) {
-                    lastSlash = operation.indexOf("|");
-                }
-                if (lastSlash != -1 && commandNumber == 1) {
-                    nextCommand = operation.substring(lastSlash + 2, operation.length());
-                    operation = operation.substring(0, lastSlash);
-                } else {
-                    pipe = false;
-                }
 
-                String[] allCommands = operation.split("\\s+");
+            // Split on the pipe symbol to handle each command in sequence
+            String[] commands = operation.split("\\|");
+
+            // Loop through each command separated by "|"
+            for (String command : commands) {
+                String[] allCommands = command.trim().split("\\s+");
                 Parser parse = new Parser(allCommands);
 
                 String cmd = parse.getCmd();
@@ -61,30 +51,23 @@ public class main {
                         T.cat(parse.getArguments()[1]);
                     }
                 } else if (cmd.equals("rm")) {
-
                     if (parse.getFirstArguments().equals("")) {
                         System.out.println("One argument needed");
-
                     } else {
                         T.rm(parse.getFirstArguments());
-
                     }
-
                 } else if (cmd.equals("mv")) {
                     if (parse.getSecondArguments().equals("")) {
                         System.out.println("Two arguments needed");
                     } else {
                         T.mv(parse.getFirstArguments(), parse.getSecondArguments());
-
                     }
-
                 } else if (cmd.equals("help")) {
                     if (parse.getFirstArguments().equals("")) {
                         T.help();
                     } else {
                         System.out.println("No arguments needed");
                     }
-
                 } else if (cmd.equals("rmdir")) {
                     if (parse.getSecondArguments().equals("")) {
                         T.rmdir(parse.getFirstArguments());
@@ -118,10 +101,8 @@ public class main {
                 } else {
                     System.out.println("Command not found");
                 }
-
             }
 
         } while (true);
-
     }
 }
