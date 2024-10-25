@@ -35,85 +35,11 @@ public class main {
                 String[] allCommands = command.trim().split("\\s+");
                 Parser parse = new Parser(allCommands);
 
-<<<<<<< HEAD
-                    String cmd = parse.getCmd();
-                    String[] arguments = parse.getArguments();
-
-
-                    if (cmd.equals("cd")) {
-                        directory = T.cd(parse.getArguments()[1], directory);
-                    } else if (cmd.equals("ls")) {
-                        T.ls(arguments);
-                    } else if (cmd.equals("pwd")) {
-                        if (parse.getFirstArguments().equals("")) {
-                            T.pwd();
-                        } else {
-                            System.out.println("No arguments needed");
-                        }
-                    } else if (cmd.equals("cat")) {
-                        if (parse.getArguments()[1].equals(">") || parse.getArguments()[1].equals(">>")) {
-                            check_redirect(parse.getArguments()[1], directory, parse.getArguments()[2]);
-                        } else {
-                            T.cat(parse.getArguments()[1]);
-                        }
-                    } else if (cmd.equals("rm")) {
-                        if (parse.getFirstArguments().equals("")) {
-                            System.out.println("One argument needed");
-                        } else {
-                            T.rm(parse.getFirstArguments());
-                        }
-                    } else if (cmd.equals("mv")) {
-                        if (parse.getSecondArguments().equals("")) {
-                            System.out.println("Two arguments needed");
-                        } else {
-                            T.mv(parse.getFirstArguments(), parse.getSecondArguments());
-                        }
-                    } else if (cmd.equals("help")) {
-                        if (parse.getFirstArguments().equals("")) {
-                            T.help();
-                        } else {
-                            System.out.println("No arguments needed");
-                        }
-                    } else if (cmd.equals("rmdir")) {
-                        if (parse.getSecondArguments().equals("")) {
-                            T.rmdir(parse.getFirstArguments());
-                        } else {
-                            System.out.println("One argument needed");
-                        }
-                    } else if (cmd.equals("mkdir")) {
-                        if (parse.getSecondArguments().equals("")) {
-                            T.mkdir(parse.getFirstArguments());
-                        } else {
-                            System.out.println("One argument needed");
-                        }
-                    } else if (cmd.equals("touch")) {
-                        if (parse.getSecondArguments().equals("")) {
-                            T.touch(parse.getFirstArguments());
-                        } else {
-                            System.out.println("One argument needed");
-                        }
-                    } else if (cmd.equals("clear")) {
-                        if (parse.getFirstArguments().equals("")) {
-                            T.clear();
-                        } else {
-                            System.out.println("No arguments needed");
-                        }
-                    } else if (cmd.equals("exit")) {
-                        if (parse.getFirstArguments().equals("")) {
-                            System.exit(0);
-                        } else {
-                            System.out.println("No arguments needed");
-                        }
-                    } else {
-                        System.out.println("Command not found");
-                    }
-=======
                 String cmd = parse.getCmd();
                 String[] arguments = parse.getArguments();
 
                 if(cmd.equals("pwd")){
                     T.pwd();
->>>>>>> f2b6df3624072d853190f84fdacbe129db99b788
                 }
                 else if (cmd.equals("cd")) {
                     directory = T.cd(parse.getArguments()[1], directory);
