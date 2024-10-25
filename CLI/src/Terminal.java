@@ -18,20 +18,23 @@ public class Terminal {
 
     // command cd to change the directory that the user is in to the directory that
     // the user wants to go to
+    public void pwd(){
+        System.out.println(System.getProperty("user.dir"));
+    }
     public String cd(String location, String currentLocation) {
 
 // File object pointing to the target directory
-File newDirectory = new File(currentLocation + "\\" + location);
+        File newDirectory = new File(currentLocation + "\\" + location);
 
-if (newDirectory.exists() && newDirectory.isDirectory()) {
-    // Change the current directory to the new directory
-    currentLocation = newDirectory.getAbsolutePath();
-    System.setProperty("user.dir", currentLocation); // Update the working directory
-} else {
-    System.out.println("Directory not found.");
-}
+        if (newDirectory.exists() && newDirectory.isDirectory()) {
+            // Change the current directory to the new directory
+            currentLocation = newDirectory.getAbsolutePath();
+            System.setProperty("user.dir", currentLocation); // Update the working directory
+        } else {
+            System.out.println("Directory not found.");
+        }
 
-return currentLocation;
+        return currentLocation;
     }
 
     // command rm to remove file from the directory
@@ -176,7 +179,7 @@ return currentLocation;
         try {
 
             // this is used to check if the user wants to write to the file or append to it
-            fout = new FileWriter(location + fileName + ".txt", append);
+            fout = new FileWriter(location + fileName , append);
 
             // this is the input that the user will write to the file
             String in;
@@ -187,7 +190,6 @@ return currentLocation;
             fout.write(in + "\n");
             fout.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

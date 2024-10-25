@@ -47,7 +47,10 @@ public class main {
 
                 String cmd = parse.getCmd();
 
-                if (cmd.equals("cd")) {
+                if(cmd.equals("pwd")){
+                    T.pwd();
+                }
+                else if (cmd.equals("cd")) {
                     directory = T.cd(parse.getArguments()[1], directory);
                 } else if (cmd.equals("ls")) {
                     T.ls();
