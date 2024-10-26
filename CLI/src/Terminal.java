@@ -47,7 +47,15 @@ public class Terminal {
     // command rm to remove file from the directory
     public void rm(String fileName) {
 
-        File file = new File(fileName);
+        // File file = new File(fileName);
+
+
+        String currentPath = System.getProperty("user.dir");
+
+        // this is the file path that the user wants to remove
+        File file = new File(currentPath + "\\" + fileName);
+
+        
 
         if (file.delete()) {
             System.out.println("File deleted successfully");
@@ -57,27 +65,31 @@ public class Terminal {
 
     }
 
-    // command mv to move file from source to destination
     public void mv(String source, String destn) throws IOException {
-        // Construct source and destination file paths based on the current working
-        // directory
+        // Get the current working directory
         String currentPath = System.getProperty("user.dir");
-        File sourceFile = new File(currentPath + "\\" + source);
-        File destinationFile = new File(currentPath + "\\" + destn);
-
+        File sourceFile = new File(currentPath, source); // Source file path
+        File destinationFile = new File(currentPath, destn); // Destination file or directory
+    
         // Check if the source file exists
-        if (sourceFile.exists()) {
-            // Attempt to rename (move) the file
-            if (sourceFile.renameTo(destinationFile)) {
-                System.out.println("File moved successfully");
-            } else {
-                System.out.println("Failed to move the file");
-            }
-        } else {
+        if (!sourceFile.exists()) {
             System.out.println("Source file does not exist.");
+            return;
+        }
+    
+        // If the destination is a directory, move the file into that directory
+        if (destinationFile.isDirectory()) {
+            destinationFile = new File(destinationFile, sourceFile.getName());
+        }
+    
+        // Try renaming (moving) the file
+        if (sourceFile.renameTo(destinationFile)) {
+            System.out.println("File moved successfully.");
+        } else {
+            System.out.println("Failed to move the file.");
         }
     }
-
+    
     // command rmdir to remove a empty directory from the directory
     public void rmdir(String fileName) {
 
