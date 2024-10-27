@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Terminal {
 
@@ -110,37 +112,42 @@ public class Terminal {
     public void ls(String[] args) {
         File directory = new File(System.getProperty("user.dir"));
         boolean showAll = false;
-        boolean recursive = false;
-
-        // Check for `-a` and `-r` flags in the arguments
+        boolean reverse = false;
+    
+        // Check for -a and -r flags in the arguments
         for (String arg : args) {
             if (arg.equals("-a")) {
                 showAll = true;
             }
             if (arg.equals("-r")) {
-                recursive = true;
+                reverse = true;
             }
         }
-
-        // Call appropriate listing function based on flags
-        if (recursive) {
-            listFilesRecursively(directory, showAll, 0);
-        } else {
-            listFiles(directory, showAll);
-        }
+    
+        // List files in the directory with the specified flags
+        listFiles(directory, showAll, reverse);
     }
-
-    // Method to list files in the current directory (non-recursive)
-    private void listFiles(File directory, boolean showAll) {
+    
+    // Method to list files in the current directory with optional reverse ordering
+    private void listFiles(File directory, boolean showAll, boolean reverse) {
         String[] files;
         if (showAll) {
             files = directory.list(); // Show all files, including hidden ones
         } else {
             files = directory.list((dir, name) -> !name.startsWith(".")); // Show only non-hidden files
         }
-
-        // Print each file or folder
+    
+        // Check for null in case of access issues and apply sorting if files are found
         if (files != null) {
+            // Sort files alphabetically
+            Arrays.sort(files);
+    
+            // Reverse the array if the -r flag is set
+            if (reverse) {
+                Collections.reverse(Arrays.asList(files));
+            }
+    
+            // Print each file or folder
             for (String file : files) {
                 System.out.println(file);
             }
@@ -149,25 +156,67 @@ public class Terminal {
         }
     }
 
-    // Method to list files recursively with indentation for subdirectories
-    private void listFilesRecursively(File directory, boolean showAll, int depth) {
-        File[] files = directory.listFiles();
+    // public void ls(String[] args) {
+    //     File directory = new File(System.getProperty("user.dir"));
+    //     boolean showAll = false;
+    //     boolean recursive = false;
 
-        if (files != null) {
-            for (File file : files) {
-                // Only show hidden files if `-a` is true
-                if (showAll || !file.isHidden()) {
-                    // Print with indentation based on the depth level
-                    System.out.println("  ".repeat(depth) + file.getName());
-                }
+    //     // Check for `-a` and `-r` flags in the arguments
+    //     for (String arg : args) {
+    //         if (arg.equals("-a")) {
+    //             showAll = true;
+    //         }
+    //         if (arg.equals("-r")) {
+    //             recursive = true;
+    //         }
+    //     }
 
-                // If the file is a directory, call this method recursively with increased depth
-                if (file.isDirectory()) {
-                    listFilesRecursively(file, showAll, depth + 1);
-                }
-            }
-        }
-    }
+    //     // Call appropriate listing function based on flags
+    //     if (recursive) {
+    //         listFilesRecursively(directory, showAll, 0);
+    //     } else {
+    //         listFiles(directory, showAll);
+    //     }
+    // }
+
+    // // Method to list files in the current directory (non-recursive)
+    // private void listFiles(File directory, boolean showAll) {
+    //     String[] files;
+    //     if (showAll) {
+    //         files = directory.list(); // Show all files, including hidden ones
+    //     } else {
+    //         files = directory.list((dir, name) -> !name.startsWith(".")); // Show only non-hidden files
+    //     }
+
+    //     // Print each file or folder
+    //     if (files != null) {
+    //         for (String file : files) {
+    //             System.out.println(file);
+    //         }
+    //     } else {
+    //         System.out.println("No files found or access issue.");
+    //     }
+    // }
+
+    // // Method to list files recursively with indentation for subdirectories
+    // private void listFilesRecursively(File directory, boolean showAll, int depth) {
+    //     File[] files = directory.listFiles();
+
+    //     if (files != null) {
+    //         for (File file : files) {
+    //             // Only show hidden files if `-a` is true
+    //             if (showAll || !file.isHidden()) {
+    //                 // Print with indentation based on the depth level
+    //                 System.out.println("  ".repeat(depth) + file.getName());
+    //             }
+
+    //             // If the file is a directory, call this method recursively with increased depth
+    //             if (file.isDirectory()) {
+    //                 listFilesRecursively(file, showAll, depth + 1);
+    //             }
+    //         }
+    //     }
+    // }
 
     // command mkdir to create a new directory in the current directory
     public void mkdir(String fileName) throws IOException {
