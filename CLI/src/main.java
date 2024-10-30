@@ -48,10 +48,6 @@ public class main {
                 directory = T.cd(parse.getArguments()[1], directory);
             } else if (cmd.equals("ls")) {
 
-                if (parse.getArguments()[1].equals(">") || parse.getArguments()[1].equals(">>")) {
-                    check_redirect(parse.getArguments()[1], directory, parse.getArguments()[2]);
-                }
-
                 List<String> files = T.ls(arguments);
 
                 for (String file : files) {
