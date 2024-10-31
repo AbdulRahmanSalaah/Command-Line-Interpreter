@@ -47,7 +47,7 @@ public class main {
             } else if (cmd.equals("cd")) {
                 directory = T.cd(parse.getArguments()[1], directory);
             } else if (cmd.equals("ls")) {
-
+                System.out.println(arguments);
                 List<String> files = T.ls(arguments);
 
                 for (String file : files) {

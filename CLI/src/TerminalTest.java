@@ -1,14 +1,18 @@
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-
+import java.util.Arrays;
 public class TerminalTest {
-
+    static Terminal T = new Terminal();
     private Terminal terminal;
     private String testDir;
-
+    //private Path testDir;
     @BeforeEach
     public void setUp() {
         terminal = new Terminal();
@@ -56,58 +60,34 @@ public class TerminalTest {
         currentLocation = terminal.cd(newDir, currentLocation);
         assertEquals(new File(testDir, newDir).getAbsolutePath(), currentLocation, "Should change directory.");
     }
-    /*public void testCdValidDirectory() {
-        terminal.cd("src"); // Replace with an actual directory path in your project
-        assertTrue(terminal.getCurrentDirectory().endsWith("src"));
-    }
+
 
     @Test
-    public void testCdInvalidDirectory() {
-        cli.cd("nonexistentDir");
-        assertTrue(outContent.toString().trim().contains("Error: Invalid directory"));
-    }
-*/
-    @Test
-    public void testLs() throws IOException {
+    void testLs() throws IOException {
+        terminal.mkdir("dir1");
+        terminal.mkdir("dir2");
         terminal.touch("file1.txt");
         terminal.touch("file2.txt");
-        // Capture output and verify it contains expected files
-        // You may need to implement a way to capture stdout or refactor ls to return a
-        // List<String>
+        String[] arguments = new String[0];
+        List<String> files = terminal.ls(arguments);
+        assertEquals(4, files.size(), "There should be 4 items in the directory");
+
     }
 
-   /*@Test
-    public void testCat() throws IOException {
+
+    @Test
+    void testCat() throws IOException {
         String fileName = "testFile.txt";
-        terminal.touch(fileName);
-        // Write content to the file
-        terminal.WriteFile(testDir + "\\", fileName, false);
+        File testFile = new File(testDir, fileName);
+        String testContent = "Hello, world!";
+        try (FileWriter writer = new FileWriter(testFile)) {
+            writer.write(testContent);
+        }
+        List<String> outputLines = terminal.cat("testFile.txt");
+        List<String> expectedLines = Arrays.asList(testContent);
+        assertEquals(expectedLines, outputLines, "Content should match the file content");
+    }
 
-        // Now test reading the content
-        terminal.cat(fileName);
-        // Verify output (you may need to implement a way to capture stdout)
-
-    }*/
-   @Test
-    public void testCat() throws IOException {
-       // Redirect System.out to capture output
-       String fileName = "testFile.txt";
-       File testFile = new File(testDir, fileName);
-       String testContent = "Hello, world!";
-
-       // Write content to the file
-       try (FileWriter writer = new FileWriter(testFile)) {
-           writer.write(testContent);
-       }
-       // Redirect System.out to capture output
-       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-       System.setOut(new PrintStream(outputStream));
-
-       terminal.cat(fileName);
-
-       // Verify that the output matches the file content
-       assertEquals(testContent + System.lineSeparator(), outputStream.toString());
-   }
 
     @Test
     public void testMv() throws IOException {
@@ -129,16 +109,16 @@ public class TerminalTest {
 
     @Test
     public void testClear() {
-        // Test for clear function (this may require a different approach as it clears
-        // the console)
-        // You might want to check if the method executes without exceptions
+
         assertDoesNotThrow(() -> terminal.clear(), "Clear should execute without exceptions.");
     }
 
     @Test
     public void testHelp() {
-        // Test for help function (you may want to check if it prints the expected help
-        // message)
+
         assertDoesNotThrow(() -> terminal.help(), "Help should execute without exceptions.");
     }
+
+
+
 }
